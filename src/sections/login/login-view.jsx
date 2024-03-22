@@ -1,4 +1,6 @@
-import { useState } from 'react';
+/* eslint-disable import/no-extraneous-dependencies */
+import { useDispatch, useSelector } from 'react-redux';
+import { useLayoutEffect, useRef, useState } from 'react';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -16,32 +18,66 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { useRouter } from 'src/routes/hooks';
 
 import { bgGradient } from 'src/theme/css';
+import { login, loginSuccess } from 'src/redux/slices/authSlice';
 
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
+import { useSessionStorage } from 'usehooks-ts';
+import { AUTHENTICATE_KEY } from 'src/constants/auth.constant';
 
 // ----------------------------------------------------------------------
+const mockUser = { username: 'cinemo-web', password: 'cinemo-web' };
 
 export default function LoginView() {
   const theme = useTheme();
-
   const router = useRouter();
+  const dispatch = useDispatch();
+  const usernameRef = useRef(null);
+  const passwordRef = useRef(null);
+
+  const loading = useSelector((state) => state.auth.loading);
+
+  const [authSession] = useSessionStorage(AUTHENTICATE_KEY, null);
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleClick = () => {
-    router.push('/dashboard');
+  const navigateToDashboard = () => {
+    router.push('/');
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const username = usernameRef.current.value;
+    const password = passwordRef.current.value;
+    if (username === mockUser.username && password === mockUser.password) {
+      const user = {
+        username: 'Cinema web',
+        email: 'cinema-web@example.com',
+      };
+      dispatch(login());
+      setTimeout(() => {
+        dispatch(loginSuccess(user));
+        navigateToDashboard();
+      }, 1000);
+    }
   };
 
+  useLayoutEffect(() => {
+    if (authSession && authSession.user) {
+      navigateToDashboard();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authSession]);
   const renderForm = (
     <>
       <Stack spacing={3}>
-        <TextField name="email" label="Email address" />
+        <TextField name="username" label="Username" inputRef={usernameRef} />
 
         <TextField
           name="password"
           label="Password"
           type={showPassword ? 'text' : 'password'}
+          inputRef={passwordRef}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -55,7 +91,7 @@ export default function LoginView() {
       </Stack>
 
       <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ my: 3 }}>
-        <Link variant="subtitle2" underline="hover">
+        <Link variant="subtitle2" underline="hover" sx={{ cursor: 'pointer' }}>
           Forgot password?
         </Link>
       </Stack>
@@ -66,7 +102,8 @@ export default function LoginView() {
         type="submit"
         variant="contained"
         color="inherit"
-        onClick={handleClick}
+        loading={loading}
+        onClick={handleSubmit}
       >
         Login
       </LoadingButton>
