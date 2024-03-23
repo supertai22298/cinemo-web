@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { Link as RouterLink } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -17,17 +18,17 @@ import SvgColor from 'src/components/svg-color';
 
 // ----------------------------------------------------------------------
 
-export default function PostCard({ post, index }) {
-  const { cover, title, view, comment, share, author, createdAt } = post;
+export default function PosterMovie({ movie, index }) {
+  const { id, poster_url, title_en, rating_id, rating, duration, director, release_date } = movie;
 
-  const latestPostLarge = index === 0;
+  const latestPosterLarge = index === 0;
 
   const latestPost = index === 1 || index === 2;
 
   const renderAvatar = (
     <Avatar
-      alt={author.name}
-      src={author.avatarUrl}
+      alt={director}
+      src={poster_url}
       sx={{
         zIndex: 9,
         width: 32,
@@ -35,7 +36,7 @@ export default function PostCard({ post, index }) {
         position: 'absolute',
         left: (theme) => theme.spacing(3),
         bottom: (theme) => theme.spacing(-2),
-        ...((latestPostLarge || latestPost) && {
+        ...((latestPosterLarge || latestPost) && {
           zIndex: 9,
           top: 24,
           left: 24,
@@ -51,19 +52,22 @@ export default function PostCard({ post, index }) {
       color="inherit"
       variant="subtitle2"
       underline="hover"
+      component={RouterLink}
+      to={`/movies/${id}`} 
       sx={{
+        cursor: 'pointer',
         height: 44,
         overflow: 'hidden',
         WebkitLineClamp: 2,
         display: '-webkit-box',
         WebkitBoxOrient: 'vertical',
-        ...(latestPostLarge && { typography: 'h5', height: 60 }),
-        ...((latestPostLarge || latestPost) && {
+        ...(latestPosterLarge && { typography: 'h5', height: 60 }),
+        ...((latestPosterLarge || latestPost) && {
           color: 'common.white',
         }),
       }}
     >
-      {title}
+      {title_en}
     </Link>
   );
 
@@ -79,15 +83,15 @@ export default function PostCard({ post, index }) {
       }}
     >
       {[
-        { number: comment, icon: 'eva:message-circle-fill' },
-        { number: view, icon: 'eva:eye-fill' },
-        { number: share, icon: 'eva:share-fill' },
+        { number: rating, icon: 'eva:message-circle-fill' },
+        { number: rating_id, icon: 'eva:eye-fill' },
+        { number: duration, icon: 'eva:share-fill' },
       ].map((info, _index) => (
         <Stack
           key={_index}
           direction="row"
           sx={{
-            ...((latestPostLarge || latestPost) && {
+            ...((latestPosterLarge || latestPost) && {
               opacity: 0.48,
               color: 'common.white',
             }),
@@ -103,8 +107,8 @@ export default function PostCard({ post, index }) {
   const renderCover = (
     <Box
       component="img"
-      alt={title}
-      src={cover}
+      alt={title_en}
+      src={poster_url}
       sx={{
         top: 0,
         width: 1,
@@ -122,13 +126,13 @@ export default function PostCard({ post, index }) {
       sx={{
         mb: 2,
         color: 'text.disabled',
-        ...((latestPostLarge || latestPost) && {
+        ...((latestPosterLarge || latestPost) && {
           opacity: 0.48,
           color: 'common.white',
         }),
       }}
     >
-      {fDate(createdAt)}
+      {fDate(release_date)}
     </Typography>
   );
 
@@ -143,19 +147,19 @@ export default function PostCard({ post, index }) {
         bottom: -15,
         position: 'absolute',
         color: 'background.paper',
-        ...((latestPostLarge || latestPost) && { display: 'none' }),
+        ...((latestPosterLarge || latestPost) && { display: 'none' }),
       }}
     />
   );
 
   return (
-    <Grid xs={12} sm={latestPostLarge ? 12 : 6} md={latestPostLarge ? 6 : 3}>
+    <Grid xs={12} sm={latestPosterLarge ? 12 : 6} md={latestPosterLarge ? 6 : 3}>
       <Card>
         <Box
           sx={{
             position: 'relative',
             pt: 'calc(100% * 3 / 4)',
-            ...((latestPostLarge || latestPost) && {
+            ...((latestPosterLarge || latestPost) && {
               pt: 'calc(100% * 4 / 3)',
               '&:after': {
                 top: 0,
@@ -166,7 +170,7 @@ export default function PostCard({ post, index }) {
                 bgcolor: (theme) => alpha(theme.palette.grey[900], 0.72),
               },
             }),
-            ...(latestPostLarge && {
+            ...(latestPosterLarge && {
               pt: {
                 xs: 'calc(100% * 4 / 3)',
                 sm: 'calc(100% * 3 / 4.66)',
@@ -184,7 +188,7 @@ export default function PostCard({ post, index }) {
         <Box
           sx={{
             p: (theme) => theme.spacing(4, 3, 3, 3),
-            ...((latestPostLarge || latestPost) && {
+            ...((latestPosterLarge || latestPost) && {
               width: 1,
               bottom: 0,
               position: 'absolute',
@@ -202,7 +206,7 @@ export default function PostCard({ post, index }) {
   );
 }
 
-PostCard.propTypes = {
-  post: PropTypes.object.isRequired,
+PosterMovie.propTypes = {
+  movie: PropTypes.object.isRequired,
   index: PropTypes.number,
 };

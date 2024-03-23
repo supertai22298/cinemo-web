@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -14,7 +15,7 @@ import { RouterLink } from 'src/routes/components';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
-import { account } from 'src/_mock/account';
+import { logout, selectLoginedUser } from 'src/redux/slices/authSlice';
 
 import Logo from 'src/components/logo';
 import Scrollbar from 'src/components/scrollbar';
@@ -28,6 +29,10 @@ export default function Nav({ openNav, onCloseNav }) {
   const pathname = usePathname();
 
   const upLg = useResponsive('up', 'lg');
+
+  const user = useSelector(selectLoginedUser)
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (openNav) {
@@ -49,13 +54,13 @@ export default function Nav({ openNav, onCloseNav }) {
         bgcolor: (theme) => alpha(theme.palette.grey[500], 0.12),
       }}
     >
-      <Avatar src={account.photoURL} alt="photoURL" />
+      <Avatar src="/assets/images/avatars/avatar_25.jpg" alt="photoURL" />
 
       <Box sx={{ ml: 2 }}>
-        <Typography variant="subtitle2">{account.displayName}</Typography>
+        <Typography variant="subtitle2">{user.displayName}</Typography>
 
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {account.role}
+          {user.role}
         </Typography>
       </Box>
     </Box>
@@ -66,6 +71,17 @@ export default function Nav({ openNav, onCloseNav }) {
       {navConfig.map((item) => (
         <NavItem key={item.title} item={item} />
       ))}
+
+      <ListItemButton
+        sx={{ mt: '20px' }}
+        onClick={() => {
+          setTimeout(() => {
+            dispatch(logout());
+          }, 1000);
+        }}
+      >
+        Logout
+      </ListItemButton>
     </Stack>
   );
 
@@ -82,7 +98,7 @@ export default function Nav({ openNav, onCloseNav }) {
     >
       <Logo sx={{ mt: 3, ml: 4 }} />
 
-      {renderAccount}
+      {user && renderAccount}
 
       {renderMenu}
 
@@ -135,7 +151,7 @@ Nav.propTypes = {
 function NavItem({ item }) {
   const pathname = usePathname();
 
-  const active = item.path === pathname;
+  const active = item.path.split('/')[1] === pathname.split('/')[1];
 
   return (
     <ListItemButton

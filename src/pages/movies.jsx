@@ -1,17 +1,17 @@
 import { Helmet } from 'react-helmet-async';
 
-import { UserView } from 'src/sections/user/view';
+import MoviesView from 'src/sections/movies/view/movies-view';
 
 // ----------------------------------------------------------------------
 
-export default function UserPage() {
+export default function MoviesPage() {
   return (
     <>
       <Helmet>
-        <title> User | Cinemo web </title>
+        <title> Movies Finder | Cinemo web </title>
       </Helmet>
 
-      <UserView />
+      <MoviesView />
     </>
   );
 }

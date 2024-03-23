@@ -4,6 +4,9 @@
 Username: cinemo-web
 Password: cinemo-web
 
+I have use proxy server to access resource from https://www.majorcineplex.com/, so please go to https://cors-anywhere.herokuapp.com/corsdemo to request the permission before running this app
+
+
 ![license](https://img.shields.io/badge/license-MIT-blue.svg)
 
 >  Use Free React Admin Dashboard made with Material-UI components and React.

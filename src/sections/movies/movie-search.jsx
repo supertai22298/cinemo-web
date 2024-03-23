@@ -8,11 +8,11 @@ import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-PostSearch.propTypes = {
-  posts: PropTypes.array.isRequired,
+MovieSearch.propTypes = {
+  movies: PropTypes.array.isRequired,
 };
 
-export default function PostSearch({ posts }) {
+export default function MovieSearch({ movies }) {
   return (
     <Autocomplete
       sx={{ width: 280 }}
@@ -28,13 +28,13 @@ export default function PostSearch({ posts }) {
           },
         },
       }}
-      options={posts}
-      getOptionLabel={(post) => post.title}
+      options={movies}
+      getOptionLabel={(movie) => movie.title_en}
       isOptionEqualToValue={(option, value) => option.id === value.id}
       renderInput={(params) => (
         <TextField
           {...params}
-          placeholder="Search post..."
+          placeholder="Search movie..."
           InputProps={{
             ...params.InputProps,
             startAdornment: (

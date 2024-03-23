@@ -1,5 +1,3 @@
-// sessionStorageService.js
-
 const sessionStorageService = {
   get(key) {
     const serializedValue = sessionStorage.getItem(key);

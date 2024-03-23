@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import { useSessionStorage } from 'usehooks-ts';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useRef, useState, useLayoutEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -8,6 +9,7 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
+import { Alert, Snackbar } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
@@ -18,15 +20,19 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { useRouter } from 'src/routes/hooks';
 
 import { bgGradient } from 'src/theme/css';
-import { login, loginSuccess } from 'src/redux/slices/authSlice';
+import { AUTHENTICATE_KEY } from 'src/constants/auth.constant';
+import {
+  login,
+  authActions,
+  selectLoading,
+  selectErrorMsg,
+  selectAuthenticated,
+} from 'src/redux/slices/authSlice';
 
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
-import { useSessionStorage } from 'usehooks-ts';
-import { AUTHENTICATE_KEY } from 'src/constants/auth.constant';
 
 // ----------------------------------------------------------------------
-const mockUser = { username: 'cinemo-web', password: 'cinemo-web' };
 
 export default function LoginView() {
   const theme = useTheme();
@@ -35,39 +41,37 @@ export default function LoginView() {
   const usernameRef = useRef(null);
   const passwordRef = useRef(null);
 
-  const loading = useSelector((state) => state.auth.loading);
+  const loading = useSelector(selectLoading);
+  const errorMsg = useSelector(selectErrorMsg);
+  console.log('errorMsg', errorMsg);
+  const isAuthenticated = useSelector(selectAuthenticated);
 
-  const [authSession] = useSessionStorage(AUTHENTICATE_KEY, null);
+  const [existUser] = useSessionStorage(AUTHENTICATE_KEY, null);
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const navigateToDashboard = () => {
-    router.push('/');
-  };
   const handleSubmit = (e) => {
     e.preventDefault();
-
     const username = usernameRef.current.value;
     const password = passwordRef.current.value;
-    if (username === mockUser.username && password === mockUser.password) {
-      const user = {
-        username: 'Cinema web',
-        email: 'cinema-web@example.com',
-      };
-      dispatch(login());
-      setTimeout(() => {
-        dispatch(loginSuccess(user));
-        navigateToDashboard();
-      }, 1000);
-    }
+
+    dispatch(login({ username, password }));
   };
 
   useLayoutEffect(() => {
-    if (authSession && authSession.user) {
-      navigateToDashboard();
+    if (existUser && existUser.isAuthenticated) {
+      dispatch(authActions.loginAlready(existUser));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authSession]);
+  }, []);
+
+  useLayoutEffect(() => {
+    if (isAuthenticated) {
+      router.back();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
+
   const renderForm = (
     <>
       <Stack spacing={3}>
@@ -108,6 +112,19 @@ export default function LoginView() {
         Login
       </LoadingButton>
     </>
+  );
+
+  const renderSnackbar = (
+    <Snackbar
+      autoHideDuration={1000}
+      anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      open={!!errorMsg}
+      key="Login error snackbar"
+    >
+      <Alert severity="error" variant="filled" sx={{ width: '100%' }}>
+        {errorMsg}
+      </Alert>
+    </Snackbar>
   );
 
   return (
@@ -184,6 +201,7 @@ export default function LoginView() {
           </Divider>
 
           {renderForm}
+          {renderSnackbar}
         </Card>
       </Stack>
     </Box>

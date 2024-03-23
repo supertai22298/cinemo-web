@@ -1,17 +1,18 @@
 import { Helmet } from 'react-helmet-async';
 
-import { BlogView } from 'src/sections/blog/view';
+import { MovieDetailView } from 'src/sections/movies/detail';
+
 
 // ----------------------------------------------------------------------
 
-export default function BlogPage() {
+export default function MoviesPage() {
   return (
     <>
       <Helmet>
-        <title> Blog | Cinemo web </title>
+        <title> Movies Detail | Cinemo web </title>
       </Helmet>
 
-      <BlogView />
+      <MovieDetailView />
     </>
   );
 }

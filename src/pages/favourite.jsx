@@ -1,17 +1,17 @@
 import { Helmet } from 'react-helmet-async';
 
-import { ProductsView } from 'src/sections/products/view';
+import { FavouriteView } from 'src/sections/favourite/view';
 
 // ----------------------------------------------------------------------
 
-export default function ProductsPage() {
+export default function FavouritePage() {
   return (
     <>
       <Helmet>
-        <title> Products | Cinemo web </title>
+        <title> User | Cinemo web </title>
       </Helmet>
 
-      <ProductsView />
+      <FavouriteView />
     </>
   );
 }
