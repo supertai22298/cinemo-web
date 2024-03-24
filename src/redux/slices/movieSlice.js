@@ -18,8 +18,7 @@ const initialState = {
 const movieSlice = createSlice({
   name: 'movies',
   initialState,
-  reducers: {
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       // Handling the pending state
@@ -30,7 +29,11 @@ const movieSlice = createSlice({
       .addCase(fetchAllMovies.fulfilled, (state, action) => {
         state.loading = false;
         state.data = action.payload;
-        localStorageService.set(ALL_MOVIES_KEY, action.payload)
+        localStorageService.set(ALL_MOVIES_KEY, action.payload);
+      })
+      .addCase(fetchAllMovies.rejected, (state, action) => {
+        state.loading = false;
+        state.data = localStorageService.get(ALL_MOVIES_KEY);
       });
   },
 });
@@ -39,4 +42,6 @@ export const movieActions = { ...movieSlice.actions, fetchAllMovies };
 
 export default movieSlice.reducer;
 
+export const selectMovies = (state) => state.movies.data;
 export const selectMovieById = (state, id) => state.movies.data.find((movie) => movie.id === id);
+export const selectLoadingMovies = (state) => state.movies.loading;

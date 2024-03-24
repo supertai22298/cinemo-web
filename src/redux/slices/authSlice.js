@@ -30,6 +30,9 @@ const authSlice = createSlice({
       state.isAuthenticated = true;
       state.user = action.payload.user;
     },
+    clearError(state, action) {
+      state.errorMsg = null;
+    },
   },
   extraReducers: (builder) => {
     builder

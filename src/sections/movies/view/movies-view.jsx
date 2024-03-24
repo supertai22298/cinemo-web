@@ -6,7 +6,9 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 
-import { fetchAllMovies } from 'src/redux/slices/movieSlice';
+import { selectMovies, fetchAllMovies, selectLoadingMovies } from 'src/redux/slices/movieSlice';
+
+import Loading from 'src/components/loading/loading';
 
 import MovieSort from '../movie-sort';
 import PosterMovie from '../poster-movie';
@@ -17,16 +19,17 @@ import MovieSearch from '../movie-search';
 export default function MoviesView() {
   const dispatch = useDispatch();
 
-  const movies = useSelector((state) => state.movies.data);
-
-  useEffect(() => {
-    console.log('movies', movies);
-  }, [movies]);
+  const movies = useSelector(selectMovies);
+  const loading = useSelector(selectLoadingMovies);
 
   useEffect(() => {
     dispatch(fetchAllMovies());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <Container>
@@ -45,11 +48,13 @@ export default function MoviesView() {
         />
       </Stack>
 
-      <Grid container spacing={3}>
-        {movies.map((movie, index) => (
-          <PosterMovie key={movie.id} movie={movie} index={index} />
-        ))}
-      </Grid>
+      {movies.length > 0 && (
+        <Grid container spacing={3}>
+          {movies.map((movie, index) => (
+            <PosterMovie key={movie.id} movie={movie} index={index} />
+          ))}
+        </Grid>
+      )}
     </Container>
   );
 }

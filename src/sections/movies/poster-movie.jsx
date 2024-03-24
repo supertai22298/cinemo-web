@@ -109,6 +109,7 @@ export default function PosterMovie({ movie, index }) {
       component="img"
       alt={title_en}
       src={poster_url}
+      lazy="true"
       sx={{
         top: 0,
         width: 1,

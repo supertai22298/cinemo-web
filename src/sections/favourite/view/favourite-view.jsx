@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useLocalStorage } from 'usehooks-ts';
 
 import Stack from '@mui/material/Stack';
@@ -14,10 +13,6 @@ import PosterMovie from 'src/sections/movies/poster-movie';
 
 export default function FavouriteView() {
   const [movies] = useLocalStorage(FAVOURITE_MOVIE_KEY, []);
-
-  useEffect(() => {
-    console.log('movies', movies);
-  }, [movies]);
 
   return (
     <Container>

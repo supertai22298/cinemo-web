@@ -1,9 +1,9 @@
 import { lazy, Suspense } from 'react';
 import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 
-import { Box, CircularProgress } from '@mui/material';
-
 import DashboardLayout from 'src/layouts/dashboard';
+
+import Loading from 'src/components/loading/loading';
 
 import PrivateRoute from './private-route';
 
@@ -22,21 +22,7 @@ export default function Router() {
       element: (
         <PrivateRoute>
           <DashboardLayout>
-            <Suspense
-              fallback={
-                <Box
-                  sx={{
-                    display: 'flex',
-                    height: '600px',
-                    width: '600px',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                >
-                  <CircularProgress />
-                </Box>
-              }
-            >
+            <Suspense fallback={<Loading />}>
               <Outlet />
             </Suspense>
           </DashboardLayout>
@@ -47,6 +33,7 @@ export default function Router() {
         { path: 'movies', element: <MoviesPage /> },
         { path: 'movies/:movieId', element: <MovieDetailPage /> },
         { path: 'my-favourite', element: <FavouritePage /> },
+        { path: 'loading', element: <Loading /> },
       ],
     },
     {

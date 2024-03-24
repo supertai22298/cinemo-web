@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { useSessionStorage } from 'usehooks-ts';
+import { useRef, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useRef, useState, useLayoutEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -31,6 +31,7 @@ import {
 
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
+import Loading from 'src/components/loading/loading';
 
 // ----------------------------------------------------------------------
 
@@ -43,7 +44,6 @@ export default function LoginView() {
 
   const loading = useSelector(selectLoading);
   const errorMsg = useSelector(selectErrorMsg);
-  console.log('errorMsg', errorMsg);
   const isAuthenticated = useSelector(selectAuthenticated);
 
   const [existUser] = useSessionStorage(AUTHENTICATE_KEY, null);
@@ -57,15 +57,14 @@ export default function LoginView() {
 
     dispatch(login({ username, password }));
   };
-
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (existUser && existUser.isAuthenticated) {
       dispatch(authActions.loginAlready(existUser));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (isAuthenticated) {
       router.back();
     }
@@ -120,14 +119,22 @@ export default function LoginView() {
       anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       open={!!errorMsg}
       key="Login error snackbar"
+      onClose={() => dispatch(authActions.clearError())}
     >
-      <Alert severity="error" variant="filled" sx={{ width: '100%' }}>
+      <Alert
+        severity="error"
+        variant="filled"
+        sx={{ width: '100%' }}
+        onClose={() => dispatch(authActions.clearError())}
+      >
         {errorMsg}
       </Alert>
     </Snackbar>
   );
 
-  return (
+  return isAuthenticated ? (
+    <Loading />
+  ) : (
     <Box
       sx={{
         ...bgGradient({
@@ -201,7 +208,7 @@ export default function LoginView() {
           </Divider>
 
           {renderForm}
-          {renderSnackbar}
+          {errorMsg && renderSnackbar}
         </Card>
       </Stack>
     </Box>
